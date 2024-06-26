@@ -32,7 +32,7 @@ public class frm_mhs extends javax.swing.JFrame {
         user = dbsetting.SettingPanel("DBUsername");
         pass = dbsetting.SettingPanel("DBPassword");
 
-        tabel_mahasiswa.getModel(tableModel);
+        tabel_mahasiswa.setModel(tableModel);
         settableload();
     }
     private javax.swing.table.DefaultTableModel tableModel = getDefaultTableModel();
@@ -60,11 +60,28 @@ public class frm_mhs extends javax.swing.JFrame {
             }
         };
     }
+    
+    String data[]=new String[5];
     private void settableload(){
         String stat = "";
         try{
             Class.forName(driver);
             Connection kon = DriverManager.getConnection(database,user,pass);
+            Statement stt=kon.createStatement();
+            String SQL = "select * from t_mahasiswa";
+            ResultSet res = stt.executeQuery(SQL);
+            while (res.next())
+            {
+                data[0] = res.getString(1);
+                data[1] = res.getString(2);
+                data[2] = res.getString(3);
+                data[3] = res.getString(4);
+                data[4] = res.getString(5);
+                tableModel.addRow(data);
+            }
+            res.close();
+            stt.close();
+            kon.close();
         }
         catch(Exception ex){
             System.err.println(ex.getMessage());
@@ -283,7 +300,7 @@ public class frm_mhs extends javax.swing.JFrame {
                             .addComponent(txt_tempat_lahir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bth_tambah)
@@ -295,7 +312,7 @@ public class frm_mhs extends javax.swing.JFrame {
                 .addGap(22, 22, 22))
         );
 
-        setBounds(0, 0, 626, 440);
+        setBounds(0, 0, 647, 460);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txt_nimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nimActionPerformed

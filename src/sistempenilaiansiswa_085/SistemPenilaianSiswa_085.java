@@ -15,8 +15,8 @@ public class SistemPenilaianSiswa_085 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        frm_mhs mhs = new frm_mhs();
-        mhs.setVisible(true);
+        frm_utama utama = new frm_utama();
+        utama.setVisible(true);
     }
     
 }

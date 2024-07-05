@@ -85,6 +85,7 @@ public class frm_matkul extends javax.swing.JFrame {
     
     public void membersihkan_teks()
     {
+        txt_cari_kd_mk.setText("");
         txt_kd_mk.setText("");
         txt_nama_mk.setText("");
     }
@@ -145,7 +146,12 @@ public class frm_matkul extends javax.swing.JFrame {
         btn_batal = new javax.swing.JButton();
         btn_keluar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
@@ -158,16 +164,16 @@ public class frm_matkul extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(221, 221, 221)
+                .addGap(264, 264, 264)
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jLabel1)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
         );
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -187,6 +193,11 @@ public class frm_matkul extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tabel_mk.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabel_mkMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabel_mk);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -198,8 +209,18 @@ public class frm_matkul extends javax.swing.JFrame {
         jLabel5.setText("Masukan Kode Mata Kuliah");
 
         btn_cari.setText("Cari");
+        btn_cari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cariActionPerformed(evt);
+            }
+        });
 
         btn_tampil.setText("Tampilkan Semua Data");
+        btn_tampil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tampilActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -343,6 +364,7 @@ public class frm_matkul extends javax.swing.JFrame {
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
         // TODO add your handling code here:
         membersihkan_teks();
+        
         txt_kd_mk.requestFocus();
         btn_simpan.setEnabled(true);
         btn_ubah.setEnabled(false);
@@ -408,7 +430,7 @@ public class frm_matkul extends javax.swing.JFrame {
                 Class.forName(driver);
                 Connection kon = DriverManager.getConnection(database,user,pass);
                 Statement stt = kon.createStatement();
-                String SQL = "UPDATE `t_mahasiswa` "
+                String SQL = "UPDATE `t_mata_kuliah` "
                             +"SET `kd_mk` = '"+kd_mk+"',"
                             +"`nama_mk` = '"+nama_mk+"' "
                         +"WHERE"
@@ -473,6 +495,64 @@ public class frm_matkul extends javax.swing.JFrame {
         System.exit(0);
         }
     }//GEN-LAST:event_btn_keluarActionPerformed
+
+    private void tabel_mkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_mkMouseClicked
+        // TODO add your handling code here:
+        if(evt.getClickCount()==1) {
+            tampil_field();
+            btn_tambah.setEnabled(false);
+            btn_batal.setEnabled(true);
+            btn_keluar.setEnabled(false);
+        }
+    }//GEN-LAST:event_tabel_mkMouseClicked
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+        frm_utama utama = new frm_utama();
+        utama.setVisible(true);
+    }//GEN-LAST:event_formWindowClosed
+
+    private void btn_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cariActionPerformed
+        // TODO add your handling code here:
+        tableModel.setRowCount(0);
+        //Menggunakan query untuk mencari
+        
+        try
+        {
+            Class.forName(driver);
+            Connection kon = DriverManager.getConnection(
+                database,
+                user,
+                pass);
+            Statement  stt = kon.createStatement();
+            String     SQL = "SELECT * FROM t_mata_kuliah where kd_mk ="+
+                              txt_cari_kd_mk.getText();
+            ResultSet  res = stt.executeQuery(SQL);
+            while(res.next())
+            {
+                data[0] = res.getString(1);
+                data[1] = res.getString(2);
+                tableModel.addRow(data);
+            }
+            res.close();
+            stt.close();
+            kon.close();
+        }
+        catch(Exception ex)
+        {
+            System.err.println(ex.getMessage());
+            JOptionPane.showMessageDialog(null, 
+                    ex.getMessage(),"ERROR",
+                    JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+        }
+    }//GEN-LAST:event_btn_cariActionPerformed
+
+    private void btn_tampilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tampilActionPerformed
+        // TODO add your handling code here:
+        tableModel.setRowCount(0);
+        settableload();
+    }//GEN-LAST:event_btn_tampilActionPerformed
 
     
     /**
